@@ -23,7 +23,7 @@ ffmpeg ist vorhanden. Schrift und Whisper-Modell werden beim ersten Lauf automat
 5. **Prüfen:**
    - `python boerse60.py standbilder folgen/<datum>.json` ausführen.
    - Die PNGs ansehen: Text darf nicht abgeschnitten sein, die Ränder müssen frei bleiben (oben 230 px, unten 430 px, rechts 140 px), die Zahlen müssen stimmen. Fehler beheben.
-6. **Archivieren:** `git add folgen/ && git commit -m "Folge <datum>" && git push`. Vorher `git pull --rebase`.
+6. **Nicht pushen:** Das Repository ist öffentlich und wird ohne Anmeldung geladen. Folgen-Dateien und Videos bleiben nur in der Sitzung.
 7. **Ausliefern:**
    - Mit **SendUserMessage** schicken:
      - Überschrift „Börse in 60 Sekunden – <Wochentag, Datum>“
