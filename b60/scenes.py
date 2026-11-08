@@ -673,7 +673,7 @@ def sc_outro(ctx, sz, t, dur):
     d = ImageDraw.Draw(lay)
     p = ease_out_back(prog(t, 0.05, 0.7), 1.3)
     from .gfx import logo_mark
-    lg = logo_mark(230)
+    lg = logo_mark(200)
     s = clamp(p, 0, 1.15)
     if s > 0.02:
         lgs = lg.resize((max(1, int(lg.size[0] * s)), max(1, int(lg.size[1] * s))), Image.LANCZOS)

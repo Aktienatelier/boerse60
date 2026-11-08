@@ -294,7 +294,7 @@ def logo_mark(size: int = 66) -> Image.Image:
             bb = im.getbbox()
             if bb:
                 im = im.crop(bb)
-            im.thumbnail((size, size), Image.LANCZOS)
+            im.thumbnail((int(size * 1.6), size), Image.LANCZOS)
             return im
     a = AA(size, size, 4)
     a.rrect((2, 2, size - 2, size - 2), size * .26, fill=rgba(B.GLOW1))
@@ -311,7 +311,7 @@ def draw_header(img: Image.Image, date_label: str, alpha: float = 1.0):
     lay = layer(W, 120)
     lay.alpha_composite(lg, (B.SAFE_LEFT, 6 + (62 - lg.size[1]) // 2))
     d = ImageDraw.Draw(lay)
-    draw_text(d, (B.SAFE_LEFT + 80, 38), B.BRAND_NAME, font("SemiBold", 27), rgba(B.INK, .92),
+    draw_text(d, (B.SAFE_LEFT + lg.size[0] + 18, 38), B.BRAND_NAME, font("SemiBold", 27), rgba(B.INK, .92),
               anchor="lm", tracking=5)
     # Datums-Pille rechts (endet vor dem rechten Rand)
     f = font("SemiBold", 24)
