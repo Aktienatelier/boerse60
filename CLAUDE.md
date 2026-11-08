@@ -40,7 +40,7 @@ ffmpeg ist vorhanden. Schrift und Whisper-Modell werden beim ersten Lauf automat
    ```bash
    python boerse60.py render folgen/<datum>.json --audio <datei>
    ```
-   Das Programm schneidet Versprecher und wiederholte Satzanfänge heraus, kürzt Pausen und bearbeitet die Stimme nach Variante C (1,1-fach, warmer Radioklang). Die Untertitel kommen aus dem Skript.
+   Das Programm schneidet Versprecher und wiederholte Satzanfänge heraus, kürzt Pausen und bearbeitet die Stimme mit der festen Kette aus `b60/audio.py` (Säubern „natürlich“ + Variante C: 1,1-fach, warmer Radioklang, −15 LUFS). Diese Einstellungen nicht ändern. Die Untertitel kommen aus dem Skript.
 3. Warnungen in der Ausgabe beachten (Satz nicht gefunden, Video unter 61 s) und dem Nutzer kurz melden.
 4. Mit **SendUserFile** schicken: `ausgabe/<datum>/boerse60_<datum>.mp4` und `titelbild.png`. Den Inhalt von `caption.txt` als Nachricht zum Kopieren dazu.
 5. Videos **nicht** ins Repository committen, sie sind zu groß.

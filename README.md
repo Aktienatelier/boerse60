@@ -23,7 +23,7 @@ Außerdem wird **ffmpeg** benötigt (Windows: `winget install ffmpeg`, Mac: `bre
    ```
 4. **Morgens hochladen:** Die Dateien liegen in `ausgabe/<datum>/`, nämlich `boerse60_<datum>.mp4`, `titelbild.png` und `caption.txt` (zwei Varianten plus Hashtags).
 
-Die Stimme wird automatisch nach Variante C bearbeitet: 1,1-fach schneller bei gleicher Tonhöhe, warmer Radioklang, Lautheit −14 LUFS, lange Pausen gekürzt.
+Die Stimme wird automatisch nach Variante C bearbeitet: 1,1-fach schneller bei gleicher Tonhöhe, warmer Radioklang, Lautheit −15 LUFS (zwei Durchgänge), lange Pausen gekürzt – identisch mit der Kette aus den bisherigen Videos (Säubern „natürlich“ + Variante C).
 
 ## Weitere Befehle
 
@@ -34,7 +34,7 @@ Die Stimme wird automatisch nach Variante C bearbeitet: 1,1-fach schneller bei g
 | `python boerse60.py vorschau folgen/X.json` | stummes Video mit geschätztem Timing (15 fps) |
 | `python boerse60.py daten folgen/X.json` | Kursdaten neu laden (`--neu` geht auch bei render) |
 | `--musik datei.mp3` | leise Hintergrundmusik dazumischen |
-| `--whisper medium` | genauere Erkennung der Aufnahme (langsamer) |
+| `--whisper small` | schnellere, etwas ungenauere Erkennung (Standard: medium) |
 
 ## Szenentypen
 

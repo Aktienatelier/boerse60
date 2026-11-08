@@ -25,29 +25,60 @@ MAX_INNER_GAP = 0.42     # längere Pausen im Satz werden gekürzt …
 INNER_GAP = 0.22         # … auf diese Länge
 PAD_IN, PAD_OUT = 0.05, 0.09
 
-# Variante C: warmer Radioklang, kein Exciter, kein Gate, ohne Verzerrung
-VOICE_CHAIN = ",".join([
-    "highpass=f=75",
-    "equalizer=f=130:t=q:w=1.0:g=2.5",     # Wärme
-    "equalizer=f=320:t=q:w=1.2:g=-1.5",    # Mulm weg
-    "equalizer=f=3200:t=q:w=1.4:g=1.5",    # Verständlichkeit
-    "equalizer=f=9000:t=h:w=0.8:g=-1.0",   # weiche Höhen, kein Zischen
-    "acompressor=threshold=-20dB:ratio=3:attack=8:release=140:makeup=2",
-    f"atempo={TEMPO}",
-    "loudnorm=I=-14:TP=-1.5:LRA=7",
-    "alimiter=limit=0.89",
-])
+# Standard-Kette „natürlich“ (säubern) – übernommen aus dem Produktions-Chat (Nov. 2026)
+NATUERLICH = ("adeclick=w=55:o=75:a=2:t=2,highpass=f=80,afftdn=nf=-45:nr=8,equalizer=f=120:t=q:w=1:g=1.5,"
+              "equalizer=f=300:t=q:w=1.2:g=-1.5,equalizer=f=3000:t=q:w=1.2:g=2.5,deesser=i=0.3,"
+              "acompressor=threshold=-20dB:ratio=2:attack=15:release=250:makeup=1")
+# Variante C: warmer Radioklang ohne Verzerrung, Exciter oder Gate
+WARM_FX = ("equalizer=f=140:t=q:w=0.9:g=3,equalizer=f=350:t=q:w=1.2:g=-1.5,equalizer=f=2500:t=q:w=1.5:g=1,"
+           "equalizer=f=9000:t=q:w=1:g=-1.5,lowpass=f=14000,"
+           "acompressor=threshold=-22dB:ratio=2.2:attack=12:release=220:knee=6:makeup=1")
+VOICE_CHAIN = f"{NATUERLICH},{WARM_FX},atempo={TEMPO}"
+LOUDNORM = "loudnorm=I=-15:TP=-1.5:LRA=11"
 
 
 # ───────────────────────── Text-Hilfen ─────────────────────────
-_NUMW = {"0": "null", "1": "eins", "2": "zwei", "3": "drei", "4": "vier", "5": "fünf",
-         "6": "sechs", "7": "sieben", "8": "acht", "9": "neun", "10": "zehn"}
+_EINER = ["null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn",
+          "elf", "zwölf", "dreizehn", "vierzehn", "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn"]
+_ZEHNER = ["", "", "zwanzig", "dreißig", "vierzig", "fünfzig", "sechzig", "siebzig", "achtzig", "neunzig"]
+
+
+def num_de(n: int) -> str:
+    """Ganze Zahl (0–9999) als deutsches Zahlwort, z. B. 17 → siebzehn, 2020 → zweitausendzwanzig."""
+    if n < 20:
+        return _EINER[n]
+    if n < 100:
+        e, z = n % 10, n // 10
+        return (("ein" if e == 1 else _EINER[e]) + "und" if e else "") + _ZEHNER[z]
+    if n < 1000:
+        h, r = divmod(n, 100)
+        return ("ein" if h == 1 else _EINER[h]) + "hundert" + (num_de(r) if r else "")
+    if n < 10000:
+        t, r = divmod(n, 1000)
+        return ("ein" if t == 1 else _EINER[t]) + "tausend" + (num_de(r) if r else "")
+    return str(n)
+
+
+def norm_tokens(tok: str) -> list[str]:
+    """Ein Wort → normalisierte Vergleichs-Token (Ziffern werden zu Zahlwörtern, % zu „prozent“)."""
+    t = tok.lower().replace("%", " prozent ").replace("€", " euro ").replace("$", " dollar ")
+    out = []
+    for part in t.split():
+        m = re.fullmatch(r"[^\wäöüß]*(\d+)(?:[.,](\d+))?[^\wäöüß]*", part)
+        if m:
+            words = num_de(int(m.group(1))) if len(m.group(1)) <= 4 else m.group(1)
+            if m.group(2):
+                words += "komma" + "".join(_EINER[int(c)] for c in m.group(2))
+            out.append(words)
+            continue
+        p = re.sub(r"[^\wäöüß]+", "", part)
+        if p:
+            out.append(p)
+    return out
 
 
 def norm(tok: str) -> str:
-    t = tok.lower().replace("%", " prozent").replace("€", " euro").replace("$", " dollar")
-    t = re.sub(r"[^\wäöüß]+", "", t)
-    return _NUMW.get(t, t)
+    return "".join(norm_tokens(tok))
 
 
 def split_sentences(text: str) -> list[str]:
@@ -61,7 +92,13 @@ def script_sentences(ep: dict) -> list[dict]:
     for si, sz in enumerate(ep["szenen"]):
         for s in split_sentences(sz.get("text", "")):
             words = s.split()
-            out.append({"szene": si, "text": s, "words": words, "toks": [norm(w) for w in words]})
+            toks, tw = [], []
+            for wi, w in enumerate(words):
+                for t in norm_tokens(w):
+                    toks.append(t)
+                    tw.append(wi)
+            if toks:
+                out.append({"szene": si, "text": s, "words": words, "toks": toks, "tokword": tw})
     return out
 
 
@@ -121,9 +158,11 @@ def transcribe(wav16: Path, model_size="small"):
     words = []
     for sg in segs:
         for w in sg.words or []:
-            tok = norm(w.word)
-            if tok:
-                words.append({"raw": w.word.strip(), "tok": tok, "s": float(w.start), "e": float(w.end)})
+            toks = norm_tokens(w.word)
+            for k, tok in enumerate(toks):
+                d = (float(w.end) - float(w.start)) / len(toks)
+                words.append({"raw": w.word.strip(), "tok": tok, "s": float(w.start) + k * d,
+                              "e": float(w.start) + (k + 1) * d})
     return words
 
 
@@ -263,8 +302,8 @@ def process_recording(ep: dict, wav_in: Path, out_dir: Path, model_size="small")
                 a0, a1, o0 = tmap[-1]
                 return o0 + (t - a0)
 
-            # Skriptwörter (korrekte Schreibweise) mit Zeiten aus der Aufnahme
-            n = len(s["words"])
+            # Token-Zeiten aus der Aufnahme, Lücken interpolieren
+            n = len(s["toks"])
             times = [None] * n
             for k, wi in al["map"].items():
                 if 0 <= k < n and al["p"] <= wi <= al["last"]:
@@ -279,9 +318,18 @@ def process_recording(ep: dict, wav_in: Path, out_dir: Path, model_size="small")
                     t1 = times[hi][0] if hi is not None else s_end
                     gaps = (hi if hi is not None else n) - (lo if lo is not None else -1)
                     pos = k - (lo if lo is not None else -1)
-                    a = t0 + (t1 - t0) * (pos - 1) / gaps
-                    b = t0 + (t1 - t0) * pos / gaps
-                    times[k] = (a, b)
+                    times[k] = (t0 + (t1 - t0) * (pos - 1) / gaps, t0 + (t1 - t0) * pos / gaps)
+            # Skriptwörter (korrekte Schreibweise) bekommen die Zeiten ihrer Token
+            wt = {}
+            for k, wi in enumerate(s["tokword"]):
+                a_, b_ = times[k]
+                wt[wi] = (min(a_, wt[wi][0]), max(b_, wt[wi][1])) if wi in wt else (a_, b_)
+            wtimes, last_e = [], s_beg
+            for wi in range(len(s["words"])):
+                v = wt.get(wi, (last_e, last_e + 0.05))
+                wtimes.append(v)
+                last_e = v[1]
+            times = wtimes
             scene_start.setdefault(s["szene"], max(0.0, times[0][0] - 0.25))
             for wtxt, (a, b) in zip(s["words"], times):
                 out_words.append({"w": wtxt, "s": a, "e": b})
@@ -292,7 +340,16 @@ def process_recording(ep: dict, wav_in: Path, out_dir: Path, model_size="small")
         cut = td / "cut.wav"
         _write_wav(cut, np.concatenate(pieces))
         final = out_dir / "stimme_final.wav"
-        _run([ff, "-y", "-i", str(cut), "-af", VOICE_CHAIN, "-ar", str(SR), str(final)])
+        vor = td / "vor.wav"
+        _run([ff, "-y", "-i", str(cut), "-af", VOICE_CHAIN, "-ar", str(SR), "-ac", "1", str(vor)])
+        # Lautheit in zwei Durchgängen (linear, ohne Pumpen) – wie im Produktions-Chat
+        r = subprocess.run([ff, "-hide_banner", "-i", str(vor), "-af", LOUDNORM + ":print_format=json",
+                            "-f", "null", "-"], capture_output=True, text=True).stderr
+        j = json.loads(r[r.rindex("{"):])
+        _run([ff, "-y", "-i", str(vor), "-af",
+              f"{LOUDNORM}:measured_I={j['input_i']}:measured_TP={j['input_tp']}:measured_LRA={j['input_lra']}:"
+              f"measured_thresh={j['input_thresh']}:offset={j['target_offset']}:linear=true",
+              "-ar", str(SR), "-ac", "1", str(final)])
 
     # Zeiten auf 1,1-faches Tempo umrechnen
     for w in out_words:

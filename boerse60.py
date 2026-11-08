@@ -143,7 +143,7 @@ def main():
     ap.add_argument("folge", help="Pfad zur Folgen-Datei (JSON)")
     ap.add_argument("--audio", help="Deine Aufnahme (WAV/MP3/M4A)")
     ap.add_argument("--musik", help="optionale Hintergrundmusik (leise)")
-    ap.add_argument("--whisper", default="small", help="Whisper-Modell: base, small, medium")
+    ap.add_argument("--whisper", default="medium", help="Whisper-Modell: base, small, medium")
     ap.add_argument("--kerne", type=int, default=None, help="Anzahl CPU-Kerne")
     ap.add_argument("--neu", action="store_true", help="Kursdaten neu laden")
     ap.add_argument("--zeit", type=float, default=2.6, help="Zeitpunkt in der Szene für Standbilder")
