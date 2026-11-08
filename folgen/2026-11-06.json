@@ -1,0 +1,94 @@
+{
+  "datum": "2026-11-06",
+  "hintergrund_suche": "stock market trading screen",
+  "szenen": [
+    {
+      "typ": "hook",
+      "zeile1": "Comeback der Chips",
+      "ticker": "AMD",
+      "unterzeile": "AMD einen Tag nach dem größten Tech-Absturz seit 2020",
+      "quelle": "Yahoo Finance (Kursdaten)",
+      "text": "Einen Tag nach dem Tech-Crash schlagen die Chipwerte zurück. AMD springt um elf Prozent nach oben! Was am Freitag sonst los war, gibt's jetzt in sechzig Sekunden."
+    },
+    {
+      "typ": "zahl",
+      "kicker": "Rückblick Donnerstag",
+      "titel": "So tief fiel der Nasdaq 100 an einem einzigen Tag",
+      "wert": "−6,36 %",
+      "farbe": "verlust",
+      "ticker": "^NDX",
+      "ohne_veraenderung": true,
+      "chart": "3m",
+      "unterzeile": "Schwächster Tag seit März 2020",
+      "quelle": "CNN, CNBC (5.11.2026), Yahoo Finance",
+      "text": "Kurz zur Erinnerung: Am Donnerstag ist der Nasdaq 100 um mehr als sechs Prozent eingebrochen. Das war der schwächste Tag seit März 2020. Der Grund: Anleger fürchten, dass der Ausbau von KI-Rechenzentren nach den US-Zwischenwahlen langsamer wird."
+    },
+    {
+      "typ": "markt",
+      "titel": "Freitag im Überblick",
+      "werte": [
+        "^GSPC",
+        "^NDX",
+        "^DJI",
+        "^GDAXI",
+        "BTC-USD",
+        "GC=F"
+      ],
+      "text": "Und am Freitag? Der Nasdaq 100 legt gut ein Prozent zu, der S&P 500 schafft ein kleines Plus. Ganz anders in Frankfurt: Der DAX verliert fast zwei Prozent."
+    },
+    {
+      "typ": "aktie",
+      "ticker": "AMD",
+      "name": "AMD",
+      "chart": "intraday",
+      "fakten": [
+        {
+          "label": "Donnerstag",
+          "wert": "−17,26 %",
+          "hinweis": "Ausverkauf"
+        },
+        {
+          "label": "Freitag",
+          "wert": "+11,04 %",
+          "hinweis": "Erholung"
+        },
+        {
+          "label": "Abstand zum Hoch",
+          "wert": "−30,9 %",
+          "hinweis": "Hoch am 6. Oktober"
+        }
+      ],
+      "text": "Besonders stark: AMD. Die Aktie springt um elf Prozent. Am Donnerstag ging es aber noch um mehr als siebzehn Prozent runter. Bis zum Rekordhoch von Anfang Oktober fehlen immer noch rund dreißig Prozent."
+    },
+    {
+      "typ": "sektoren",
+      "text": "Bei den Sektoren liegt Technologie klar vorne. Basiskonsum und Rohstoffe geben dagegen nach."
+    },
+    {
+      "typ": "gewinner_verlierer",
+      "markt": "us",
+      "text": "Ganz oben: Airbnb und AMD mit jeweils rund elf Prozent, dahinter Lam Research. Am Ende der Liste stehen Salesforce, Netflix und Adobe."
+    },
+    {
+      "typ": "outro",
+      "titel": "Montag geht's weiter.",
+      "text": "Das war die Börse in sechzig Sekunden. Keine Anlageberatung, nur Einordnung. Bis Montag!"
+    }
+  ],
+  "quellen": [
+    "Yahoo Finance (Kursdaten)",
+    "CNN, CNBC (5.11.2026)"
+  ],
+  "caption": [
+    "Erst −6 % beim Nasdaq 100, dann das Comeback: AMD +11 % 📈 Was am Freitag an der Börse los war – in 60 Sekunden. Keine Anlageberatung.",
+    "Tech-Crash am Donnerstag, Erholung am Freitag. Chipwerte vorne, DAX hinten. Dein Börsentag kompakt. Keine Anlageberatung."
+  ],
+  "hashtags": [
+    "#börse",
+    "#aktien",
+    "#nasdaq",
+    "#amd",
+    "#finanzen",
+    "#börsein60sekunden"
+  ]
+}
