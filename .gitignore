@@ -3,3 +3,4 @@ ausgabe/
 fonts/
 __pycache__/
 *.pyc
+tagesdaten.json
